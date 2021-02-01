@@ -12,7 +12,7 @@ def seam_carve(image_path,output_image_path,seam_num):
     image = cv2.imread(image_path)
     if VERTICAL_MODE == False:
         print('yes')
-        numpy.rot90(image,1,(1,0))
+        image = numpy.rot90(image,1,(1,0))
     width = image.shape[1]
     if width > MAX_IMAGE_WIDTH:
         image = resize(image,MAX_IMAGE_WIDTH)
@@ -21,7 +21,7 @@ def seam_carve(image_path,output_image_path,seam_num):
     output_image = image
     output_image = remove_seams(output_image,seam_num)
     if VERTICAL_MODE == False:
-        numpy.rot90(output_image,-1,(1,0))
+        output_image = numpy.rot90(output_image,-1,(1,0))
     cv2.imwrite(output_image_path,output_image)
     output_image = cv2.imread(output_image_path)
     output_image = cv2.cvtColor(output_image, cv2.COLOR_BGR2RGB)
@@ -31,7 +31,9 @@ def remove_seams(image,seam_num):
     seam_images = []
     for i in range(seam_num):
         boolmask = get_min_seam_mask(image)
-        seam_images.append(heighlight_mask(image,boolmask))
+        gif_image = heighlight_mask(image,boolmask)
+        gif_image = numpy.rot90(gif_image,-1,(1,0))
+        seam_images.append(gif_image)
         image = remove_seam(image,boolmask)
         print(f'seam number { i+1 } is removed')
     imageio.mimsave('./images/output.gif', seam_images)
